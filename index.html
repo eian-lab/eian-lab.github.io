@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="日语随身听">
+  <meta name="description" content="把课程留在手机里。首次导入，此后离线听日语。">
+  <meta name="color-scheme" content="light dark">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <link rel="icon" type="image/svg+xml" href="./icon.svg">
+  <link rel="stylesheet" href="./app.css">
+  <title>日语随身听</title>
+</head>
+<body>
+  <svg class="icon-defs" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.8c0-1 1-1.5 1.8-1l13 7.2c.8.5.8 1.5 0 2l-13 7.2c-.8.5-1.8 0-1.8-1z" fill="currentColor"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><rect x="5" y="4" width="5" height="16" rx="1.5" fill="currentColor"/><rect x="14" y="4" width="5" height="16" rx="1.5" fill="currentColor"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="m3 4 12 8L3 20z" fill="currentColor"/><rect x="17" y="4" width="4" height="16" rx="1" fill="currentColor"/></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="m21 4-12 8 12 8z" fill="currentColor"/><rect x="3" y="4" width="4" height="16" rx="1" fill="currentColor"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="m14 5-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-import" viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6c-3-3-7-3-10-2v15c3-1 7-1 10 2 3-3 7-3 10-2V4c-3-1-7-1-10 2zM12 6v15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </svg>
+  <div class="app-shell">
+    <header class="topbar">
+      <button id="back-button" class="back-button" hidden><svg><use href="#i-back"/></svg><span>课程</span></button>
+      <span id="brand" class="brand"><img src="./icon.svg" width="28" height="28" alt="">日语随身听</span>
+      <span id="lesson-kicker" class="lesson-glass-title" hidden></span>
+      <button id="help-button" class="help-button" aria-label="安装与使用说明">?</button>
+    </header>
+    <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+    <div id="error-box" class="error-box" role="alert" hidden><strong>暂时无法完成</strong><p id="error-message"></p><button id="dismiss-error" class="text-button">知道了</button></div>
+    <section id="update-box" class="notice" role="status" aria-live="polite" hidden><strong>播放器有更新</strong><p id="update-message"></p><button id="apply-update" class="text-button">更新播放器</button><a class="text-button" href="/update/">检查更新 / 修复安装</a></section>
+    <main>
+      <section id="browser-setup" class="setup-card" aria-labelledby="setup-title" hidden>
+        <p class="eyebrow">把播放器装到手机</p>
+        <h1 id="setup-title">请在 Safari 中安装</h1>
+        <p id="setup-message">复制安装网址，在 Safari 中打开后添加到主屏幕。</p>
+        <label for="install-url" class="sr-only">正式安装网址</label>
+        <input id="install-url" type="url" readonly autocapitalize="off" spellcheck="false">
+        <button id="copy-install-url" class="primary-button" data-copy-install>复制安装网址</button>
+        <p id="copy-status" class="help-note" role="status" aria-live="polite"></p>
+        <ol class="install-steps">
+          <li><strong>在 Safari 打开</strong><p>切换到手机的 Safari，把复制的网址粘贴到地址栏，打开网站。</p></li>
+          <li><strong>添加到主屏幕</strong><p>点 Safari 的分享按钮，选择“添加到主屏幕”，开启“作为 Web App 打开”。</p></li>
+          <li><strong>从新图标进入，再导入</strong><p>回到主屏幕，点“日语随身听”，然后选择第 1 课 ZIP。课程只保存在本机。</p></li>
+        </ol>
+      </section>
+      <section id="library-view">
+        <div class="page-heading"><p class="eyebrow">点读版 2.8 · 只在你的手机里</p><h1>我的课程</h1><p class="subtitle">每天听一点，让日语更熟悉。</p></div>
+        <section id="welcome-card" class="welcome-card" aria-labelledby="welcome-title">
+          <div class="welcome-art" aria-hidden="true"><svg><use href="#i-book"/></svg><span class="sound-line line-a"></span><span class="sound-line line-b"></span><span class="sound-line line-c"></span></div>
+          <h2 id="welcome-title">把第一课装进口袋</h2>
+          <p>单词与课文，完整装进口袋。<br>导入一次，以后点开就能听。</p>
+          <button class="primary-button import-trigger"><svg><use href="#i-import"/></svg>导入第 1 课</button>
+          <p class="quiet-note">课程包只在本机读取，不会上传</p>
+        </section>
+        <div class="section-heading"><h2>大家的日本语 · 初级 1</h2><span>第二版</span></div>
+        <div id="lesson-list" class="grouped-list" aria-label="课程列表"></div>
+        <button id="import-more" class="import-row import-trigger" hidden><svg><use href="#i-import"/></svg>导入课程包</button>
+        <p class="library-footer" id="library-status">正在检查离线状态…</p>
+      </section>
+      <section id="lesson-view" hidden>
+        <div class="lesson-heading"><h1 id="lesson-title" lang="ja"></h1></div>
+        <div id="study-tabs" class="study-tabs" role="group" aria-label="学习内容"><button id="show-text" class="selected" aria-pressed="true">课文</button><button id="show-vocabulary" aria-pressed="false">单词</button></div>
+        <section class="player-card" aria-label="音频播放器">
+          <div class="player-heading"><h2 id="now-title">文型</h2><span id="track-count" class="meta-text"></span></div>
+          <div class="player-details"><p class="track-detail" id="now-detail"></p><p class="local-status" id="lesson-status"><svg><use href="#i-check"/></svg><span>已存本机</span></p></div>
+          <div class="seek-area"><label for="seek" class="sr-only">播放进度</label><input id="seek" type="range" min="0" max="100" value="0" step="0.1" aria-valuetext="0分0秒"><div class="time-row"><span id="elapsed">0:00</span><span id="duration">0:00</span></div></div>
+          <div class="transport"><button id="previous" class="transport-button" aria-label="上一组音频"><svg><use href="#i-prev"/></svg></button><button id="play" class="play-button" aria-label="播放"><svg><use id="play-icon" href="#i-play"/></svg></button><button id="next" class="transport-button" aria-label="下一组音频"><svg><use href="#i-next"/></svg></button></div>
+          <button id="play-all" class="play-all-button"><svg><use href="#i-play"/></svg>文型 → 例文 → 会话，连播一次</button>
+          <div id="playback-modes" class="mode-group" role="group" aria-label="播放模式"><button id="mode-lesson" class="mode-button selected" aria-pressed="true">播放一次</button><button id="mode-single" class="mode-button" aria-pressed="false">当前循环</button><button id="mode-repeat" class="mode-button" aria-pressed="false">整课循环</button></div>
+          <p id="playback-mode-hint" class="mode-hint" role="status">当前内容播完停止。</p>
+        </section>
+        <div id="text-panel">
+        <div class="content-navigation"><div id="track-list" class="section-jumps" role="tablist" aria-label="课文分类"></div></div>
+        <section class="lesson-text-section" aria-label="课文点读">
+          <div class="section-heading conversation-heading"><span id="track-total" class="content-duration"></span><div class="heading-controls"><button id="furigana" class="furigana-toggle selected" aria-pressed="true" aria-label="汉字上方显示假名">假名</button><div class="text-switch" role="group" aria-label="课文显示方式"><button id="japanese-only" aria-pressed="false">日语</button><button id="bilingual" class="selected" aria-pressed="true">日中</button></div></div></div>
+          <div id="learning-sections"></div>
+        </section>
+        </div>
+        <section id="vocabulary-panel" aria-labelledby="vocabulary-title" hidden>
+          <div class="section-heading vocabulary-heading"><div><h2 id="vocabulary-title">本课单词</h2><p id="vocabulary-count" class="section-caption"></p></div><div class="heading-controls"><button id="vocab-furigana" class="furigana-toggle selected" aria-pressed="true" aria-label="汉字上方显示假名">假名</button><div class="text-switch" role="group" aria-label="单词显示方式"><button id="vocab-japanese-only" aria-pressed="false">日语</button><button id="vocab-bilingual" class="selected" aria-pressed="true">日中</button></div></div></div>
+          <p id="vocabulary-hint" class="text-note">点一行，只听这个词的官方原声。</p>
+          <div id="vocabulary-update" class="vocabulary-update" hidden><p id="vocabulary-update-message"></p><button class="import-trigger import-row">重新选择课程包</button></div>
+          <div id="vocabulary-list" class="sentence-list" aria-label="单词点读列表"></div>
+        </section>
+      </section>
+    </main>
+    <footer id="mini-player" class="mini-player" hidden><button id="mini-open" class="mini-open"><span class="mini-icon" aria-hidden="true"><svg><use href="#i-book"/></svg></span><span><strong id="mini-title"></strong><small id="mini-subtitle"></small></span></button><button id="mini-play" class="mini-play" aria-label="播放"><svg><use id="mini-play-icon" href="#i-play"/></svg></button></footer>
+  </div>
+  <dialog id="help-dialog"><div class="dialog-top"><h2>装进口袋，随时听</h2><button id="close-help" class="text-button">完成</button></div><ol class="install-steps"><li><strong>先添加到主屏幕</strong><p>在 Safari 的分享菜单里，选择“添加到主屏幕”，开启“作为 Web App 打开”。</p></li><li><strong>从主屏幕打开，再导入</strong><p>先把课程包 ZIP 保存到 iPhone“文件”，然后从本 App 选择它。课程只保存在这台设备上。</p></li><li><strong>确认“已可离线使用”</strong><p>完成后可断网播放。若清除网站数据或重新安装，请重新导入原课程包。</p></li></ol><p id="install-context" class="help-note"></p><p class="help-note">第一次播放请点播放键。完整音频支持系统播放控制；单词与单句点读建议保持 App 在前台。锁屏和耳机兼容性以手机实测为准。</p><p id="storage-note" class="help-note"></p><button class="primary-button import-trigger">选择课程包</button><a href="/update/" class="import-row">检查播放器更新 / 修复安装</a><p class="version-label">日语随身听 点读版 2.8 · 官方原声，本机播放</p></dialog>
+  <input id="package-file" type="file" accept=".zip,application/zip,application/x-zip-compressed" hidden>
+  <audio id="audio" preload="auto"></audio>
+  <noscript>此播放器需要启用 JavaScript，才能在本机导入和播放课程。</noscript>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

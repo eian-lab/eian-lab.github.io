@@ -4,8 +4,8 @@ import { allLessons, getFile, saveLesson } from './storage.js';
 const $ = id => document.getElementById(id);
 const audio = $('audio');
 const BASE = new URL('./', import.meta.url);
-const APP_VERSION = '3.0.0';
-const REQUIRED_SHELL = [3, 0, 0];
+const APP_VERSION = '3.0.1';
+const REQUIRED_SHELL = [3, 0, 1];
 const INSTALL_URL = 'https://eian-lab.github.io/';
 const JA_SIZES = [['较小', 17], ['标准', 20], ['较大', 23], ['很大', 26], ['特大', 30]];
 const TILE_STOPS = ['#f7b6ce', '#d7c6f4', '#b6d3ff', '#a8e6df'];
@@ -752,7 +752,7 @@ function playAudio() {
   if (!navigator.serviceWorker?.controller) { error('本机离线播放器尚未就绪，请联网重新打开 App 后再播放。'); return; }
   if (state.segment && audio.readyState >= 1 && (audio.currentTime >= state.segment.end - 0.01 || audio.currentTime < state.segment.start)) audio.currentTime = state.segment.start;
   else if (audio.ended) audio.currentTime = 0;
-  playbackWanted = true;
+  playbackWanted = true; claimPlaybackSession();
   const version = selectionVersion, loadVersion = mediaLoadVersion; hideError(); notice('');
   audio.play()?.catch(reason => {
     if (version !== selectionVersion || loadVersion !== mediaLoadVersion || !playbackWanted || reason.name === 'AbortError') return;
@@ -762,6 +762,8 @@ function playAudio() {
     updatePlayback();
   });
 }
+// iOS keeps lock-screen controls longer for a declared playback session; unsupported browsers ignore it.
+function claimPlaybackSession() { try { if (navigator.audioSession && navigator.audioSession.type !== 'playback') navigator.audioSession.type = 'playback'; } catch { /* Optional API. */ } }
 function pausePlayback() { openingLesson++; playbackWanted = false; audio.pause(); }
 function togglePlayback() { if (audio.paused || audio.ended) playAudio(); else pausePlayback(); }
 function setMode(mode) {
@@ -1061,7 +1063,7 @@ async function boot() {
   setMode(preference('mode')); setBilingual(preference('bilingual') !== false && preference('vocabularyBilingual') !== false);
   setFurigana(preference('furigana') !== false); setJaSize(preference('jaSize') ?? 1);
   $('install-context').textContent = standalone() ? '你正在主屏幕 App 中。现在可以导入课程包。' : '建议先添加到主屏幕，再从主屏幕图标进入并导入课程，避免 Safari 与 App 的存储不同步。';
-  installMediaActions();
+  installMediaActions(); claimPlaybackSession();
   try {
     const problem = browserSupport(); if (problem) { showSetup(problem); return; }
     state.lessons = await allLessons();

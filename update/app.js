@@ -3,7 +3,7 @@
 // must operate on the single root worker and the existing origin's course store.
 const root = new URL('../', import.meta.url);
 const installPage = new URL('update/', root);
-const REQUIRED_VERSION = [3, 0, 0];
+const REQUIRED_VERSION = [3, 0, 1];
 const RELEASE_LABEL = '点读版 3.0';
 let running = false;
 

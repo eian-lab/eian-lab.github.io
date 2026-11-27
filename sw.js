@@ -1,6 +1,6 @@
 import { getFile } from './storage.js';
 import { parseRange, mediaType } from './core.js';
-const VERSION = 'minna-shell-v2.8.0';
+const VERSION = 'minna-shell-v3.0.0';
 const ROOT = new URL('./', self.location.href);
 const SHELL = ['', 'app.css', 'app.js', 'core.js', 'storage.js', 'manifest.webmanifest', 'icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png', 'data/catalog.json'];
 self.addEventListener('install', event => {
